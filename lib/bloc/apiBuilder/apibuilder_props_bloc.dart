@@ -24,5 +24,21 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
         emit(state.copyWith(apis: updatedApis));
       }
     });
+    on<SelectedApiIndex>((event, emit) {
+      if (event.index >= 0 && event.index < state.apis.length) {
+        emit(state.copyWith(selectedApiIndex: event.index));
+      }
+    });
+
+    on<AddRequestObject>((event, emit) {
+      print('AddRequestObjectBloc---->${event.requestObject}');
+      emit(state.copyWith(requestObject: event.requestObject));
+      // print('New state: ${state.copyWith(requestObject: event.requestObject)}');
+    });
+
+    on<AddResponseObject>((event, emit) {
+      print('AddResponseObject---->${event.responseObject}');
+      emit(state.copyWith(apiResponse: event.responseObject));
+    });
   }
 }

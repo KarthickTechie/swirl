@@ -16,36 +16,41 @@ class ApiCall {
   });
 
   dynamic callApi() async {
-    Response response;
-    if (method == 'GET' || method == 'get') {
-      response = await dio.get(
-        url,
-        data: jsonEncode(request),
-        options: Options(headers: headers),
-      );
-      print('GET Dio response $response');
-    } else if (method == 'POST' || method == 'post') {
-      response = await dio.post(
-        url,
-        data: jsonEncode(request),
-        options: Options(headers: headers),
-      );
-      print('POST Dio response $response');
-    } else if (method == 'DELETE' || method == 'delete') {
-      response = await dio.delete(
-        url,
-        data: jsonEncode(request),
-        options: Options(headers: headers),
-      );
-      print('DELETE Dio response $response');
-    } else {
-      response = await dio.put(
-        url,
-        data: jsonEncode(request),
-        options: Options(headers: headers),
-      );
-      print('PUT Dio response $response');
+    try {
+      Response response;
+      if (method == 'GET' || method == 'get') {
+        response = await dio.get(
+          url,
+          // queryParameters: request,
+          data: request,
+          options: Options(headers: headers),
+        );
+        print('GET Dio response $response');
+      } else if (method == 'POST' || method == 'post') {
+        response = await dio.post(
+          url,
+          data: request,
+          options: Options(headers: {'Content-Type':'application/json'}),
+        );
+        print('POST Dio response $response');
+      } else if (method == 'DELETE' || method == 'delete') {
+        response = await dio.delete(
+          url,
+          data: jsonEncode(request),
+          options: Options(headers: headers),
+        );
+        print('DELETE Dio response $response');
+      } else {
+        response = await dio.put(
+          url,
+          data: jsonEncode(request),
+          options: Options(headers: headers),
+        );
+        print('PUT Dio response $response');
+      }
+      return response;
+    } catch (error) {
+      print(error);
     }
-    return response;
   }
 }

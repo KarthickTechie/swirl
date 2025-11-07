@@ -8,6 +8,11 @@ abstract class ApiEvent extends Equatable {
 
 class LoadApis extends ApiEvent {}
 
+class SelectedApiIndex extends ApiEvent {
+  final int index;
+  SelectedApiIndex(this.index);
+}
+
 class AddApi extends ApiEvent {
   final ApiModel api;
   AddApi(this.api);
@@ -31,4 +36,14 @@ class DeleteApi extends ApiEvent {
 
   @override
   List<Object?> get props => [index];
+}
+
+class AddRequestObject extends ApiEvent {
+  final RequestObject requestObject;
+  AddRequestObject(this.requestObject);
+}
+
+class AddResponseObject extends ApiEvent {
+  final dynamic responseObject;
+  AddResponseObject(this.responseObject);
 }

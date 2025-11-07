@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
 
 class ApiModel extends Equatable {
   final String apiName;
@@ -7,7 +10,7 @@ class ApiModel extends Equatable {
   final String httpMethod;
   final List<Header> headers;
   final RequestObject requestKeys;
-  final ApiResponse? responses;
+  final dynamic responses;
 
   const ApiModel({
     required this.apiName,
@@ -20,41 +23,31 @@ class ApiModel extends Equatable {
   });
 
   // ======= JSON Deserialization =======
-  factory ApiModel.fromJson(Map<String, dynamic> json) {
-    return ApiModel(
-      apiName: json['apiName'] ?? '',
-      apiEndpoint: json['apiEndpoint'] ?? '',
-      apiMethodName: json['apiMethodName'] ?? '',
-      httpMethod: json['httpMethod'] ?? '',
-      headers:
-          (json['headers'] as List<dynamic>?)
-              ?.map((e) => Header.fromJson(e))
-              .toList() ??
-          [],
-      requestKeys:
-          json['requestKeys'] != null
-              ? RequestObject.fromJson(
-                Map<String, dynamic>.from(json['requestKeys']),
-              )
-              : const RequestObject({}),
-      responses: json['responses'] != null
-          ? ApiResponse.fromJson(json['responses'])
-          : null,
-    );
-  }
+  // factory ApiModel.fromJson(Map<String, dynamic> json) {
+  //   return ApiModel(
+  //     apiName: json['apiName'] ?? '',
+  //     apiEndpoint: json['apiEndpoint'] ?? '',
+  //     apiMethodName: json['apiMethodName'] ?? '',
+  //     httpMethod: json['httpMethod'] ?? '',
+  //     headers:
+  //         (json['headers'] as List<dynamic>?)
+  //             ?.map((e) => Header.fromJson(e))
+  //             .toList() ??
+  //         [],
+  //     requestKeys:
+  //         json['requestKeys'] != null
+  //             ? RequestObject.fromJson(
+  //               Map<String, dynamic>.from(json['requestKeys']),
+  //             )
+  //             : const RequestObject({}),
+  //     responses: json['responses'] != null
+  //         ? ApiResponse.fromJson(json['responses'])
+  //         : null,
+  //   );
+  // }
 
   // ======= JSON Serialization =======
-  Map<String, dynamic> toJson() {
-    return {
-      'apiName': apiName,
-      'apiEndpoint': apiEndpoint,
-      'apiMethodName': apiMethodName,
-      'httpMethod': httpMethod,
-      'headers': headers.map((h) => h.toJson()).toList(),
-      'requestKeys': requestKeys.toJson(),
-      'responses': responses?.toJson(),
-    };
-  }
+  String toJson() => json.encode(toMap());
 
   // ======= CopyWith =======
   ApiModel copyWith({
@@ -64,7 +57,7 @@ class ApiModel extends Equatable {
     String? httpMethod,
     List<Header>? headers,
     RequestObject? requestKeys,
-    ApiResponse? responses,
+    dynamic responses,
   }) {
     return ApiModel(
       apiName: apiName ?? this.apiName,
@@ -78,15 +71,49 @@ class ApiModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-    apiName,
-    apiEndpoint,
-    apiMethodName,
-    httpMethod,
-    headers,
-    requestKeys,
-    responses,
-  ];
+  List<Object?> get props {
+    return [
+      apiName,
+      apiEndpoint,
+      apiMethodName,
+      httpMethod,
+      headers,
+      requestKeys,
+      responses,
+    ];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'apiName': apiName,
+      'apiEndpoint': apiEndpoint,
+      'apiMethodName': apiMethodName,
+      'httpMethod': httpMethod,
+      'headers': headers.map((x) => x.toMap()).toList(),
+      'requestKeys': requestKeys.toMap(),
+      'responses': responses,
+    };
+  }
+
+  factory ApiModel.fromMap(Map<String, dynamic> map) {
+    return ApiModel(
+      apiName: map['apiName'] ?? '',
+      apiEndpoint: map['apiEndpoint'] ?? '',
+      apiMethodName: map['apiMethodName'] ?? '',
+      httpMethod: map['httpMethod'] ?? '',
+      headers: List<Header>.from(map['headers']?.map((x) => Header.fromMap(x))),
+      requestKeys: RequestObject.fromMap(map['requestKeys']),
+      responses: map['responses'] ?? '',
+    );
+  }
+
+  factory ApiModel.fromJson(String source) =>
+      ApiModel.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'ApiModel(apiName: $apiName, apiEndpoint: $apiEndpoint, apiMethodName: $apiMethodName, httpMethod: $httpMethod, headers: $headers, requestKeys: $requestKeys, responses: $responses)';
+  }
 }
 
 // ======= Header Class =======
@@ -96,43 +123,78 @@ class Header extends Equatable {
 
   const Header({required this.key, required this.value});
 
-  factory Header.fromJson(Map<String, dynamic> json) {
-    return Header(key: json['key'] ?? '', value: json['value'] ?? '');
-  }
+  // factory Header.fromJson(Map<String, dynamic> json) {
+  //   return Header(key: json['key'] ?? '', value: json['value'] ?? '');
+  // }
 
-  Map<String, dynamic> toJson() => {'key': key, 'value': value};
+  // Map<String, dynamic> toJson() => {'key': key, 'value': value};
 
   @override
-  List<Object?> get props => [key, value];
+  List<Object> get props => [key, value];
+
+  Header copyWith({String? key, String? value}) {
+    return Header(key: key ?? this.key, value: value ?? this.value);
+  }
+
+  Map<String, dynamic> toMap() {
+    return {'key': key, 'value': value};
+  }
+
+  factory Header.fromMap(Map<String, dynamic> map) {
+    return Header(key: map['key'] ?? '', value: map['value'] ?? '');
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Header.fromJson(String source) => Header.fromMap(json.decode(source));
+
+  @override
+  String toString() => 'Header(key: $key, value: $value)';
 }
 
 // ======= ResponseKey Class =======
-class ApiResponse extends Equatable {
+class ApiResponse {
   final dynamic data;
 
-  const ApiResponse({this.data});
+  const ApiResponse({required this.data});
 
-  factory ApiResponse.fromJson(dynamic json) {
-    return ApiResponse(data: json);
-  }
+  // factory ApiResponse.fromJson(dynamic json) {
+  //   return ApiResponse(data: json);
+  // }
 
-  dynamic toJson() => data;
+  // dynamic toJson() => data;
 
   @override
-  List<Object?> get props => [data];
+  List<Object> get props => [data];
+
+  ApiResponse copyWith({dynamic data}) {
+    return ApiResponse(data: data ?? this.data);
+  }
+
+  Map<String, dynamic> toMap() {
+    return data;
+  }
+
+  factory ApiResponse.fromMap(Map<String, dynamic> map) {
+    return ApiResponse(data: map['data'] ?? null);
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory ApiResponse.fromJson(String source) {
+    final decoded = json.decode(source);
+    return ApiResponse(data: decoded);
+  }
+
+  @override
+  String toString() => 'ApiResponse(data: $data)';
 }
 
-
 // ======= RequestObject Class =======
-class RequestObject extends Equatable {
+class RequestObject {
   final Map<String, dynamic> request;
 
-  const RequestObject(this.request);
-
-  factory RequestObject.fromJson(Map<String, dynamic> json) =>
-      RequestObject(Map<String, dynamic>.from(json));
-
-  Map<String, dynamic> toJson() => request;
+  RequestObject(this.request);
 
   RequestObject addNestedKey(String keys, dynamic value) {
     final newData = Map<String, dynamic>.from(request);
@@ -163,5 +225,25 @@ class RequestObject extends Equatable {
   void clearNestedReqObjectValues() {}
 
   @override
-  List<Object?> get props => [request];
+  List<Object> get props => [request];
+
+  RequestObject copyWith({Map<String, dynamic>? request}) {
+    return RequestObject(request ?? this.request);
+  }
+
+  Map<String, dynamic> toMap() {
+    return request;
+  }
+
+  factory RequestObject.fromMap(Map<String, dynamic> map) {
+    return RequestObject(Map<String, dynamic>.from(map['request']));
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory RequestObject.fromJson(String source) =>
+      RequestObject.fromMap(json.decode(source));
+
+  @override
+  String toString() => 'RequestObject(request: $request)';
 }
