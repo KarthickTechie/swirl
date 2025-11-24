@@ -4,9 +4,11 @@ import 'package:dashboard/appdata/page/bppage_schema.dart';
 import 'package:dashboard/bloc/bpwidgetaction/model/action/bpwidget_action.dart';
 import 'package:dashboard/bloc/bpwidgetaction/model/dataprovider/bpwidget_tasks_dataprovider.dart';
 import 'package:dashboard/bloc/bpwidgetaction/model/jobs/bpwidget_job.dart';
+import 'package:dashboard/bloc/bpwidgetprops/model/bpwidget_props.dart';
 import 'package:dashboard/bloc/bpwidgets/model/bpwidget.dart';
 import 'package:dashboard/bloc/bpwidgets/model/bpwidget_schema.dart';
 import 'package:dashboard/pages/dashboard_page.dart';
+import 'package:dashboard/pages/inbox_page_builder.dart';
 import 'package:dashboard/types/drag_drop_types.dart';
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -26,20 +28,21 @@ class DynamicForm extends StatelessWidget {
 
   FormGroup buildFormGroup(List<BPWidget> widgets) {
     final controls = <String, AbstractControl<dynamic>>{};
-
     for (var widget in widgets) {
       if (widget.widgetType == PlaceholderWidgets.Textfield) {
-        controls[widget.bpwidgetProps!.controlName] = FormControl<String>(
+        final bpWidgetprops = widget.bpwidgetProps! as BpwidgetProps;
+        controls[bpWidgetprops.controlName] = FormControl<String>(
           validators: [
-            if (widget.bpwidgetProps!.isRequired == 'true') Validators.required,
-            if (widget.bpwidgetProps!.max != null)
-              Validators.maxLength(int.parse(widget.bpwidgetProps!.max!)),
+            if (bpWidgetprops.isRequired == 'true') Validators.required,
+            if (bpWidgetprops.max != null)
+              Validators.maxLength(int.parse(bpWidgetprops.max!)),
           ],
         );
       } else if (widget.widgetType == PlaceholderWidgets.Dropdown) {
-        controls[widget.bpwidgetProps!.controlName] = FormControl<String>(
+        final bpWidgetprops = widget.bpwidgetProps! as BpwidgetProps;
+        controls[bpWidgetprops.controlName] = FormControl<String>(
           validators: [
-            if (widget.bpwidgetProps!.isRequired == 'true') Validators.required,
+            if (bpWidgetprops.isRequired == 'true') Validators.required,
           ],
         );
       }
@@ -51,29 +54,31 @@ class DynamicForm extends StatelessWidget {
   List<Widget> buildFormWidgets(List<BPWidget> widgets) {
     return widgets.map((widget) {
       if (widget.widgetType == PlaceholderWidgets.Textfield) {
+        final BpwidgetProps bpWidgetprops = widget.bpwidgetProps! as BpwidgetProps;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ReactiveTextField(
-            formControlName: widget.bpwidgetProps!.controlName,
+            formControlName: bpWidgetprops.controlName,
             decoration: InputDecoration(
-              labelText: widget.bpwidgetProps!.label,
+              labelText: bpWidgetprops.label,
               border: const OutlineInputBorder(),
             ),
             validationMessages: {
               ValidationMessage.required:
-                  (_) => '${widget.bpwidgetProps!.label} is required',
+                  (_) => '${bpWidgetprops.label} is required',
               ValidationMessage.maxLength:
-                  (_) => 'Maximum length is ${widget.bpwidgetProps!.max}',
+                  (_) => 'Maximum length is ${bpWidgetprops.max}',
             },
           ),
         );
       } else if (widget.widgetType == PlaceholderWidgets.Dropdown) {
+        final BpwidgetProps bpWidgetprops = widget.bpwidgetProps! as BpwidgetProps;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ReactiveDropdownField<String>(
-            formControlName: widget.bpwidgetProps!.controlName,
+            formControlName: bpWidgetprops.controlName,
             decoration: InputDecoration(
-              labelText: widget.bpwidgetProps!.label,
+              labelText: bpWidgetprops.label,
               border: const OutlineInputBorder(),
             ),
             items: const [
@@ -83,11 +88,12 @@ class DynamicForm extends StatelessWidget {
             ],
             validationMessages: {
               ValidationMessage.required:
-                  (_) => '${widget.bpwidgetProps!.label} is required',
+                  (_) => '${bpWidgetprops.label} is required',
             },
           ),
         );
       } else if (widget.widgetType == PlaceholderWidgets.Button) {
+        final BpwidgetProps bpWidgetprops = widget.bpwidgetProps! as BpwidgetProps;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ReactiveFormConsumer(
@@ -136,10 +142,14 @@ class DynamicForm extends StatelessWidget {
                           }
                         }
                         : null,
-                child: Text(widget.bpwidgetProps!.label),
+                child: Text(bpWidgetprops.label),
               );
             },
           ),
+        );
+      } else if (widget.widgetType == PlaceholderWidgets.inbox) {
+        return InboxPageBuilder(
+          widgetSchema: widgets
         );
       }
       return const SizedBox.shrink();
@@ -152,7 +162,8 @@ class DynamicForm extends StatelessWidget {
     final widgets =pagesSchema.bpWidgetList!.schema;
     final formGroup = buildFormGroup(widgets);
     final actionButtons = pagesSchema.appBar!.actionButton.elementAt(0);
-    final action = actionButtons['action'] as BpwidgetAction;
+    // final action = actionButtons['action'] as BpwidgetAction;
+    BpwidgetAction action = BpwidgetAction.fromJson(actionButtons['action']);
     print(actionButtons['name'].toString());
     
 

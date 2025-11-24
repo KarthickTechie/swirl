@@ -12,6 +12,7 @@ import 'package:dashboard/core/api/api_call.dart';
 import 'package:dashboard/core/api/api_client.dart';
 import 'package:dashboard/pages/dashboard_page.dart';
 import 'package:dashboard/pages/dynamic_form_builder.dart';
+import 'package:dashboard/pages/inbox_page_builder.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,8 @@ class MobileScreenState extends State<MobileScreen> {
             builder: DevicePreview.appBuilder,
             title: 'Device Preview Navigation Demo',
             // home: DynamicForm(widgetSchema: pageRenderData,appBar:widget.pageData),
-            home: DynamicForm(pagesSchema: widget.pageData),
+            // home: DynamicForm(pagesSchema: widget.pageData),
+            home: InboxPageBuilder(widgetSchema: pageRenderData),
             routes: {'/second': (context) => const DashboardPage()},
           ),
     );

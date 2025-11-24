@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:dashboard/bloc/bpwidgets/model/bp_props.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:dashboard/types/ui_controls_types.dart';
@@ -14,7 +15,7 @@ import 'package:dashboard/types/ui_controls_types.dart';
                     String isVerificationRequired , <enum ValidationProps>[]
 */
 
-class BpwidgetProps {
+class BpwidgetProps extends BpProps{
   final String label;
   final String controlName;
   final String controlType;

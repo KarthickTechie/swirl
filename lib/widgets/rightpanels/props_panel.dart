@@ -55,32 +55,33 @@ class _PropsPanelState extends State<PropsPanel> {
         }
       },
       builder: (context, state) {
-        print('PropsPanel => ${widget.props}');
+        final BpwidgetProps? widgetProps = widget.props != null ? widget.props!.bpwidgetProps! as BpwidgetProps : null;
         if (widget.props != null) {
+          final BpwidgetProps? bpWidgetProps = widget.props!.bpwidgetProps! as BpwidgetProps;
           bpWidgetPropsForm.controls['label']?.updateValue(
-            widget.props!.bpwidgetProps!.label,
+            bpWidgetProps!.label,
           );
           bpWidgetPropsForm.controls['controlName']?.updateValue(
-            widget.props!.bpwidgetProps!.controlName,
+            bpWidgetProps!.controlName,
           );
           bpWidgetPropsForm.controls['controlType']?.updateValue(
-            widget.props!.bpwidgetProps!.controlType,
+            bpWidgetProps!.controlType,
           );
 
           bpWidgetPropsForm.controls['isRequired']?.updateValue(
-            widget.props!.bpwidgetProps!.isRequired,
+            bpWidgetProps!.isRequired,
           );
           bpWidgetPropsForm.controls['min']?.updateValue(
-            widget.props!.bpwidgetProps!.min,
+            bpWidgetProps!.min,
           );
           bpWidgetPropsForm.controls['max']?.updateValue(
-            widget.props!.bpwidgetProps!.max,
+            bpWidgetProps!.max,
           );
           bpWidgetPropsForm.controls['isVerificationRequired']?.updateValue(
-            widget.props!.bpwidgetProps!.isVerificationRequired,
+            bpWidgetProps!.isVerificationRequired,
           );
           bpWidgetPropsForm.controls['validationPatterns']?.updateValue(
-            widget.props!.bpwidgetProps!.validationPatterns,
+            bpWidgetProps!.validationPatterns,
           );
         }
         return ReactiveForm(
@@ -105,7 +106,7 @@ class _PropsPanelState extends State<PropsPanel> {
                       formControlName: 'label',
                       onChange: (val) {
                         bpWidgetPropsForm.controls['controlName']!.value =
-                            widget.props!.bpwidgetProps!.controlName;
+                            widgetProps!.controlName;
                         bpWidgetPropsForm.controls['controlName']!.patchValue(
                           '${bpWidgetPropsForm.controls['controlName']!.value}${val.value}',
                         );

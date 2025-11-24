@@ -18,6 +18,7 @@ import 'package:dashboard/types/ui_controls_types.dart';
 import 'package:dashboard/widgets/page_props_button_segment.dart';
 import 'package:dashboard/widgets/rightpanels/actions_panel.dart';
 import 'package:dashboard/widgets/rightpanels/datasource.dart';
+import 'package:dashboard/widgets/rightpanels/inboxpropspanel.dart';
 import 'package:dashboard/widgets/rightpanels/props_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,12 +62,23 @@ class _RightPanelState extends State<RightPanel> {
   }
 
   Widget renderPanelsBasedOnSegment() {
+    final inboxProps =
+        widget.props != null
+            ? (widget.props!.widgetType!.name == 'inbox' ? true : false)
+            : false;
     return switch (selectedSegmentButton.first) {
-      PagePropsSegmentButton.property => PropsPanel(
-        width: panelWidth,
-        height: panelHeight,
-        props: widget.props,
-      ),
+      PagePropsSegmentButton.property =>
+        inboxProps
+            ? InboxPropsPanel(
+              width: panelWidth,
+              height: panelHeight,
+              props: widget.props,
+            )
+            : PropsPanel(
+              width: panelWidth,
+              height: panelHeight,
+              props: widget.props,
+            ),
       PagePropsSegmentButton.action => ActionsPanel(
         width: panelWidth,
         height: panelHeight,

@@ -20,6 +20,15 @@ class BpwidgetForms {
     'pageurl': FormControl<String>(),
   });
 
+  static FormGroup get_bpwidgetinboxprops_forms() => FormGroup({
+    'apiName': FormControl<String>(),
+    'title': FormControl<String>(),
+    'subtitle': FormControl<String>(),
+    'key1': FormControl<String>(),
+    'key2': FormControl<String>(),
+    'key3': FormControl<String>(),
+  });
+
   static FormGroup get_pageConfiguration_form(){
     return  FormGroup({
       'title':FormControl<String>(),
@@ -28,6 +37,4 @@ class BpwidgetForms {
       'pageUrl':FormControl<String>(),
     });
   }
-
-
 }

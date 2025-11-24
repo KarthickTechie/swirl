@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:dashboard/bloc/bpinbox/model/bpwiddgetinboxprops.dart';
+import 'package:dashboard/bloc/bpwidgets/model/bp_props.dart';
 import 'package:flutter/foundation.dart';
 
 /*
@@ -14,7 +16,7 @@ import 'package:dashboard/types/drag_drop_types.dart';
 class BPWidget {
   final PlaceholderWidgets? widgetType;
   final String? id;
-  BpwidgetProps? bpwidgetProps;
+  BpProps? bpwidgetProps;
   List<BpwidgetAction>? bpwidgetAction;
   BPWidget({this.widgetType, this.id, this.bpwidgetProps, this.bpwidgetAction});
 
@@ -50,12 +52,15 @@ class BPWidget {
         (e) => e.name == map['widgetType'],
       ),
       id: map['id'] != null ? map['id'] as String : null,
-      bpwidgetProps:
+      bpwidgetProps: map['widgetType'] == 'inbox' ? (
+          map['bpwidgetProps'] != null 
+              ? BPWidgetInboxProps.fromMap(
+                  map['bpwidgetProps'] as Map<String,dynamic>) : null
+        ) :
           map['bpwidgetProps'] != null
               ? BpwidgetProps.fromMap(
                 map['bpwidgetProps'] as Map<String, dynamic>,
-              )
-              : null,
+              ) : null,
       bpwidgetAction:
           map['bpwidgetAction'] != null
               ? List<BpwidgetAction>.from(
